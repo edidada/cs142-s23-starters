@@ -1,0 +1,31 @@
+{
+  "publication_kind": "official-archive-import",
+  "imported_at": "2026-11-02",
+  "evidence": "https://web.stanford.edu/class/cs142/projects.html",
+  "archives": [
+    {
+      "directory": "project2",
+      "url": "https://web.stanford.edu/class/cs142/downloads/project2.zip",
+      "sha256": "1d55fe748dcf91f82d2975d90cda888871e259f89c639f4d2b8052c880b284f4",
+      "bytes": 34983
+    },
+    {
+      "directory": "project3",
+      "url": "https://web.stanford.edu/class/cs142/downloads/project3.zip",
+      "sha256": "c89871af597c22d7713f148debdebc0cd60b49e8b3ceb7d4ffcd0cebd8c0e5d1",
+      "bytes": 23869
+    },
+    {
+      "directory": "project4",
+      "url": "https://web.stanford.edu/class/cs142/downloads/project4.zip",
+      "sha256": "91f419b68d8428618e9866642da3cce44e26364b0702cb3e8780de8dbc92d1e3",
+      "bytes": 136968
+    },
+    {
+      "directory": "project6",
+      "url": "https://web.stanford.edu/class/cs142/downloads/project6.zip",
+      "sha256": "ce0b7efdc735a34bd9d1f6177922acb5d0e80d86304c05b803dc457f18ceaf15",
+      "bytes": 113521
+    }
+  ]
+}
