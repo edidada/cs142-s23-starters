@@ -26,6 +26,18 @@
       "url": "https://web.stanford.edu/class/cs142/downloads/project6.zip",
       "sha256": "ce0b7efdc735a34bd9d1f6177922acb5d0e80d86304c05b803dc457f18ceaf15",
       "bytes": 113521
+    },
+    {
+      "directory": "project5",
+      "url": "https://web.stanford.edu/class/cs142/downloads/project5.zip",
+      "sha256": "6df687e1ca55673513fefa7a4d3440806b4a1bf6f00eb309f1122f728134fd74",
+      "bytes": 1184862
+    },
+    {
+      "directory": "project7",
+      "url": "https://web.stanford.edu/class/cs142/downloads/project7.zip",
+      "sha256": "edabd2d156f8b6f5e72b84cb9fad33bcbda7b2e74ad04128e80a6d2ae367f9d5",
+      "bytes": 669988
     }
   ]
 }
