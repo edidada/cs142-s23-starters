@@ -1,0 +1,22 @@
+name: CS142 Project2
+on:
+  push:
+    branches: [edidada/project2]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  javascript:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - working-directory: project2
+        run: npm ci
+      - working-directory: project2
+        run: npm run lint -- --max-warnings=0
+      - working-directory: project2
+        run: npm test
+      - run: node scripts/project2-oracle.cjs
