@@ -6,7 +6,8 @@ const fs=require('node:fs');
  const browser=await chromium.launch();
  try {
   const page=await browser.newPage({viewport:{width:1100,height:850}});
-  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error('Browser pageerror:',e.message);});
+  page.on('console',m=>{if(m.type()==='error')console.error('Browser console:',m.text());});
   const base='http://localhost:3000/photo-share.html';
   await page.goto(base+'#/photos/000000000000000000000000');
   await page.getByRole('heading',{name:'Please Login',exact:true}).waitFor();
