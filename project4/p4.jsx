@@ -12,12 +12,17 @@ class SwitchingViews extends React.Component {
   }
   render() {
     const { states } = this.state;
-    return <><Header /><main className="container">
-      <button type="button" onClick={() => this.setState((previous) => ({ states: !previous.states }))}>
-        Switch to {states ? "Example" : "States"}
-      </button>
-      {states ? <States /> : <Example />}
-    </main></>;
+    return (
+      <>
+        <Header />
+        <main className="container">
+          <button type="button" onClick={() => this.setState((previous) => ({ states: !previous.states }))}>
+            Switch to {states ? "Example" : "States"}
+          </button>
+          {states ? <States /> : <Example />}
+        </main>
+      </>
+    );
   }
 }
 ReactDOM.render(<SwitchingViews />, document.getElementById("reactapp"));
