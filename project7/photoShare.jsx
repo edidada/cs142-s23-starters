@@ -22,8 +22,11 @@ function PhotoShare() {
   if (!ready) return <p>Checking session…</p>;
   return (
     <HashRouter>
-      {user ? <TopBar advanced={advanced} onAdvancedChange={setAdvanced} /> : <h2>Please Login</h2>}
-      {user && <SessionControls user={user} onLogout={() => { setUser(null); setAdvanced(false); }} />}
+      {user ? (
+        <TopBar advanced={advanced} onAdvancedChange={setAdvanced}>
+          <SessionControls user={user} onLogout={() => { setUser(null); setAdvanced(false); }} />
+        </TopBar>
+      ) : <h2>Please Login</h2>}
       <Grid container spacing={2} className="photo-layout">
         <Grid item xs={12} sm={3}>
           <Paper className="cs142-main-grid-item">{user && <UserList advanced={advanced} />}</Paper>

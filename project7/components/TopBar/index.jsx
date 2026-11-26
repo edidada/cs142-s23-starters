@@ -4,7 +4,7 @@ import { AppBar, Toolbar, Typography, Checkbox, FormControlLabel } from "@mui/ma
 import useModel from "../../lib/useModel";
 import "./styles.css";
 
-function TopBar({ advanced, onAdvancedChange }) {
+function TopBar({ advanced, onAdvancedChange, children }) {
   const { pathname } = useLocation();
   const route = pathname.match(/^\/(users|photos|comments)\/([^/]+)(?:\/[^/]+)?$/);
   const { data: info } = useModel("/test/info");
@@ -19,6 +19,7 @@ function TopBar({ advanced, onAdvancedChange }) {
           <Checkbox checked={advanced} onChange={(event) => onAdvancedChange(event.target.checked)} sx={{ color: "inherit", "&.Mui-checked": { color: "inherit" } }} />
         } />
         <Typography className="view-context">{route && route[1] === "photos" ? `Photos of ${name}` : name}</Typography>
+        {children}
       </Toolbar>
     </AppBar>
   );
