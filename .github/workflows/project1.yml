@@ -16,6 +16,7 @@ jobs:
           node-version: '22'
       - name: XHTML validation against W3C DTD
         run: |
+          set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y libxml2-utils w3c-sgml-lib
           mkdir -p results
