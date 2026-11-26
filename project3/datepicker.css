@@ -1,0 +1,8 @@
+.date-picker { width: 21rem; margin: 1rem 0; padding: 1rem; border: 1px solid #ccd5e0; border-radius: .75rem; font-family: system-ui, sans-serif; color: #24334b; box-shadow: 0 3px 12px #152d4a12; }
+.date-picker-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; font-weight: 600; }
+.date-picker table { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: center; }
+.date-picker th { font-size: .8rem; padding: .4rem 0; }
+.date-picker button { border: none; border-radius: .35rem; padding: .55rem; background: #edf3fa; color: inherit; cursor: pointer; }
+.date-picker td button { width: 100%; background: transparent; }
+.date-picker button:hover:enabled, .date-picker button:focus-visible { background: #d4e7ff; outline: 2px solid #326eab; }
+.date-picker .outside-month button { color: #a0a8b4; cursor: default; }
