@@ -1,15 +1,5 @@
-/**
- * CSS for the CS142 Project 5 main page.
- *
- * Since CSS uses a global name space for classes we should use class names
- * starting with "cs142-main-" here.
- */
-
-.cs142-main-topbar-buffer {
-  margin-top: 70px;
-}
-
-.cs142-main-grid-item {
-  height: calc(100vh - 85px);
-  padding: 10px;
-}
+.cs142-main-grid-item { padding:1rem; min-width:0; }
+.photo-layout { padding:1rem; width:100% !important; margin:0 !important; }
+.user-detail dd { margin:0 0 1rem; }
+.user-detail dt { font-weight:bold; color:#526075; }
+body { margin:0; background:#f2f5f8; }

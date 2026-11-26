@@ -12,13 +12,25 @@
  */
 function fetchModel(url) {
   return new Promise(function (resolve, reject) {
-    console.log(url);
-    setTimeout(() => reject(new Error(
-      { status: 501, statusText: "Not Implemented" })), 
-      0
-    );
-    // On Success return:
-    // resolve({data: getResponseObject});
+    const xhr = new XMLHttpRequest();
+    const fail = (statusText) => reject({ status: xhr.status, statusText });
+    xhr.open("GET", url, true);
+    xhr.timeout = 15000;
+    xhr.onload = () => {
+      if (xhr.status < 200 || xhr.status >= 300) {
+        fail(xhr.statusText);
+        return;
+      }
+      try {
+        resolve({ data: JSON.parse(xhr.responseText) });
+      } catch (error) {
+        fail("Invalid JSON response");
+      }
+    };
+    xhr.onerror = () => fail(xhr.statusText || "Network error");
+    xhr.ontimeout = () => fail("Request timed out");
+    xhr.onabort = () => fail("Request aborted");
+    xhr.send();
   });
 }
 

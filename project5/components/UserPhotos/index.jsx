@@ -1,32 +1,37 @@
 import React from "react";
-import { Typography } from "@mui/material";
-
+import { Link } from "react-router-dom";
+import { Card, CardContent, Typography } from "@mui/material";
+import useModel from "../../lib/useModel";
 import "./styles.css";
 
-/**
- * Define UserPhotos, a React component of CS142 Project 5.
- */
-class UserPhotos extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <Typography variant="body1">
-        This should be the UserPhotos view of the PhotoShare app. Since it is
-        invoked from React Router the params from the route will be in property
-        match. So this should show details of user:
-        {this.props.match.params.userId}. You can fetch the model for the user
-        from window.cs142models.photoOfUserModel(userId):
-        <Typography variant="caption">
-          {JSON.stringify(
-            window.cs142models.photoOfUserModel(this.props.match.params.userId)
-          )}
-        </Typography>
-      </Typography>
-    );
-  }
+function UserPhotos({ match }) {
+  const { data: photos, error } = useModel(`/photosOfUser/${encodeURIComponent(match.params.userId)}`);
+  if (error) return <Typography role="alert">Unable to load photos for this user.</Typography>;
+  if (!photos) return <Typography>Loading photos…</Typography>;
+  if (!photos.length) return <Typography>No photos yet.</Typography>;
+  const formatDate = (date) => new Date(date).toLocaleString("en-US", {
+    dateStyle: "medium", timeStyle: "short"
+  });
+  return (
+    <section className="user-photos" aria-label="User photos">
+      {photos.map((photo) => (
+        <Card key={photo._id} className="photo-card" data-photo-id={photo._id}>
+          <img src={`images/${photo.file_name}`} alt={`Photo by user ${photo.user_id}`} />
+          <CardContent>
+            <Typography component="time" dateTime={photo.date_time}>{formatDate(photo.date_time)}</Typography>
+            <ul className="photo-comments">
+              {(photo.comments || []).map((comment) => (
+                <li key={comment._id}>
+                  <Link to={`/users/${comment.user._id}`}>{comment.user.first_name} {comment.user.last_name}</Link>
+                  <time dateTime={comment.date_time}>{formatDate(comment.date_time)}</time>
+                  <p>{comment.comment}</p>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      ))}
+    </section>
+  );
 }
-
 export default UserPhotos;

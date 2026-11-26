@@ -1,0 +1,5 @@
+.photo-card { margin:0 0 1.5rem; }
+.photo-card img { display:block; max-width:100%; max-height:38rem; margin:auto; object-fit:contain; }
+.photo-comments { padding-left:1.25rem; }
+.photo-comments li { margin-top:1rem; }
+.photo-comments time { display:block; color:#526075; font-size:.85rem; }
