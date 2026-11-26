@@ -18,6 +18,7 @@ const models=require('../project5/modelData/photoApp.js').cs142models;
       assert.equal(await page.locator('.user-detail h1').innerText(),name);
       for(const field of ['location','occupation','description']) assert((await page.locator('.user-detail').innerText()).includes(user[field]));
       await page.waitForFunction(name=>document.querySelector('.view-context').textContent===name,name);
+      assert.equal(await page.locator('.schema-version').innerText(),'Version '+models.schemaInfo().__v);
       assert.equal(await page.locator('nav[aria-label="Users"] a').count(),users.length);
       assert.equal(await page.evaluate(()=>typeof window.cs142models),'undefined');
       await page.getByRole('link',{name:'View photos',exact:true}).click();

@@ -16,7 +16,7 @@ function UserPhotos({ match }) {
     <section className="user-photos" aria-label="User photos">
       {photos.map((photo) => (
         <Card key={photo._id} className="photo-card" data-photo-id={photo._id}>
-          <img src={`images/${photo.file_name}`} alt={`Photo by user ${photo.user_id}`} />
+          <img src={`images/${photo.file_name}`} alt={`Shared by user ${photo.user_id}`} />
           <CardContent>
             <Typography component="time" dateTime={photo.date_time}>{formatDate(photo.date_time)}</Typography>
             <ul className="photo-comments">

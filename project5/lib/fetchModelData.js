@@ -13,7 +13,9 @@
 function fetchModel(url) {
   return new Promise(function (resolve, reject) {
     const xhr = new XMLHttpRequest();
-    const fail = (statusText) => reject({ status: xhr.status, statusText });
+    const fail = (statusText) => reject(Object.assign(new Error(statusText), {
+      status: xhr.status, statusText
+    }));
     xhr.open("GET", url, true);
     xhr.timeout = 15000;
     xhr.onload = () => {
