@@ -33,3 +33,7 @@
 .cs142-code-name {
   font-family: Courier New, monospace;
 }
+
+.motto-update { padding:1.5rem; border-left:4px solid #24766b; background:#eef5f3; }
+.motto-update input { display:block; margin-top:.5rem; padding:.5rem; }
+.current-motto { font-style:italic; color:#24766b; }

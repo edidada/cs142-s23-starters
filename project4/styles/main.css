@@ -10,3 +10,7 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+.view-toolbar { display:flex; gap:.5rem; padding:1rem; background:#eef5f3; border-radius:.6rem; }
+.view-toolbar a { padding:.6rem 1.2rem; border-radius:.4rem; background:#17344b; color:white; text-decoration:none; font-family:system-ui,sans-serif; }
+.view-toolbar a:hover, .view-toolbar a:focus-visible { background:#24766b; outline:2px solid #b57724; }

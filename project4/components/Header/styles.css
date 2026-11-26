@@ -1,0 +1,6 @@
+.personal-header { display:flex; align-items:center; gap:2rem; padding:2rem; color:#17344b; background:linear-gradient(110deg,#e4f4ef,#f4eddd); border-bottom:4px solid #24766b; font-family:system-ui,sans-serif; }
+.personal-header h1 { font-size:clamp(1.3rem,3vw,2.2rem); margin:.4rem 0; }
+.header-kicker { letter-spacing:.16em; font-size:.7rem; font-weight:700; }
+.header-orbit { border:2px dashed #24766b; border-radius:50%; padding:1rem; transform:rotate(-15deg); }
+.header-orbit span { display:grid; place-items:center; width:3rem; height:3rem; border-radius:50%; background:#17344b; color:white; font-size:2.5rem; }
+@media(max-width:500px) { .personal-header { gap:1rem; padding:1rem; } }

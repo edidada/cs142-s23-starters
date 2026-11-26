@@ -4,3 +4,7 @@
  * Since CSS uses a global name space for classes we should use names starting
  * with "cs142-states-" here.
  */
+
+.states-view { max-width:48rem; padding:2rem; margin:auto; font-family:system-ui,sans-serif; }
+.states-view input { display:block; padding:.6rem; margin-top:.5rem; border:1px solid #24766b; border-radius:.4rem; }
+.states-view ul { columns:3 10rem; line-height:1.8; color:#17344b; }
