@@ -72,7 +72,7 @@ app.get("/", function (request, response) {
  * /test/counts - Returns an object with the counts of the different collections
  *                in JSON format.
  */
-app.get("/test/:p1", function (request, response) {
+app.get(["/test", "/test/:p1"], function (request, response) {
   // Express parses the ":p1" from the URL and returns it in the request.params
   // objects.
   console.log("/test called with param1 = ", request.params.p1);
@@ -203,6 +203,43 @@ app.get("/photosOfUser/:id", async function (request, response) {
   } catch (error) {
     response.status(500).send("Unable to retrieve photos");
   }
+});
+
+
+// Optional views use separate APIs so mandatory response projections stay exact.
+app.get("/userStats", async function (request, response) {
+  try {
+    const [users, photos] = await Promise.all([
+      User.find({}).select("_id").lean(),
+      Photo.find({}).select("user_id comments.user_id").lean()
+    ]);
+    const stats = new Map(users.map(user => [String(user._id), { _id: user._id, photos: 0, comments: 0 }]));
+    photos.forEach(photo => {
+      const owner = stats.get(String(photo.user_id));
+      if (owner) owner.photos++;
+      (photo.comments || []).forEach(comment => {
+        const author = stats.get(String(comment.user_id));
+        if (author) author.comments++;
+      });
+    });
+    response.json([...stats.values()]);
+  } catch (error) { response.status(500).send("Unable to retrieve statistics"); }
+});
+
+app.get("/commentsOfUser/:id", async function (request, response) {
+  const id = request.params.id;
+  if (!/^[a-fA-F0-9]{24}$/.test(id)) { response.status(400).send("Invalid user id"); return; }
+  try {
+    const [user, photos] = await Promise.all([
+      User.exists({ _id: id }),
+      Photo.find({ "comments.user_id": id }).select("_id user_id file_name comments").lean()
+    ]);
+    if (!user) { response.status(400).send("User not found"); return; }
+    response.json(photos.flatMap(photo => (photo.comments || [])
+      .filter(comment => String(comment.user_id) === id)
+      .map(comment => ({ _id: comment._id, comment: comment.comment, date_time: comment.date_time,
+        photo: { _id: photo._id, user_id: photo.user_id, file_name: photo.file_name } }))));
+  } catch (error) { response.status(500).send("Unable to retrieve comments"); }
 });
 
 const server = app.listen(3000, function () {

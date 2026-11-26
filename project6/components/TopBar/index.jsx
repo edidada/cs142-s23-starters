@@ -6,7 +6,7 @@ import "./styles.css";
 
 function TopBar({ advanced, onAdvancedChange }) {
   const { pathname } = useLocation();
-  const route = pathname.match(/^\/(users|photos)\/([^/]+)(?:\/[^/]+)?$/);
+  const route = pathname.match(/^\/(users|photos|comments)\/([^/]+)(?:\/[^/]+)?$/);
   const { data: info } = useModel("/test/info");
   const { data: user } = useModel(route ? `/user/${route[2]}` : "/user/list");
   const name = route && user && !Array.isArray(user) ? `${user.first_name} ${user.last_name}` : "Users";

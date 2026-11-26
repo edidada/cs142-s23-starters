@@ -427,3 +427,32 @@ describe("CS142 Photo App: Web API Tests", function () {
     });
   });
 });
+
+describe("Advanced statistics and authored comments", function () {
+  async function get(path) {
+    const response = await fetch("http://localhost:3000" + path);
+    assert.strictEqual(response.status, 200);
+    return response.json();
+  }
+  it("matches counts and every authored comment against mandatory photo APIs", async function () {
+    const users = await get("/user/list");
+    const stats = await get("/userStats");
+    assert.strictEqual(stats.length, users.length);
+    const photos = (await Promise.all(users.map(user => get("/photosOfUser/" + user._id)))).flat();
+    for (const user of users) {
+      const authored = photos.flatMap(photo => photo.comments.filter(comment => comment.user._id === user._id)
+        .map(comment => ({ _id: comment._id, comment: comment.comment, date_time: comment.date_time,
+          photo: { _id: photo._id, user_id: photo.user_id, file_name: photo.file_name } })));
+      assert.deepStrictEqual(stats.find(stat => stat._id === user._id), {
+        _id: user._id, photos: photos.filter(photo => photo.user_id === user._id).length, comments: authored.length
+      });
+      const actual = await get("/commentsOfUser/" + user._id);
+      assert.deepStrictEqual(actual.sort((a,b) => a._id.localeCompare(b._id)), authored.sort((a,b) => a._id.localeCompare(b._id)));
+    }
+  });
+  it("rejects malformed and nonexistent authors", async function () {
+    for (const id of ["bad", "000000000000000000000000", "123456789012"]) {
+      assert.strictEqual((await fetch("http://localhost:3000/commentsOfUser/" + id)).status, 400);
+    }
+  });
+});

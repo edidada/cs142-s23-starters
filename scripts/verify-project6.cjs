@@ -68,14 +68,43 @@ async function json(path){const r=await fetch(base+path);assert.equal(r.status,2
       await page.getByRole('checkbox',{name:'Enable Advanced Features'}).check();
       assert.equal(await page.locator('[data-photo-id]').count(),1);
     }
+    // Verify all bubbles, authored comments and both clickable thumbnail/text targets.
+    await page.getByRole('checkbox',{name:'Enable Advanced Features'}).uncheck();
+    assert.equal(await page.locator('.comment-count').count(),0);
+    await page.getByRole('checkbox',{name:'Enable Advanced Features'}).check();
+    await page.waitForFunction(()=>document.querySelectorAll('.comment-count').length===6);
+    const stats=await json('/userStats');
+    let authoredLinks=0;
+    for(const user of users){
+      const stat=stats.find(x=>x._id===user._id);
+      assert.equal(await page.getByRole('link',{name:'Comments by '+user.first_name,exact:true}).textContent(),String(stat.comments));
+      assert.equal(await page.locator('[aria-label="Photos by '+user.first_name+'"]').textContent(),String(stat.photos));
+      await page.getByRole('link',{name:'Comments by '+user.first_name,exact:true}).click();
+      await page.locator('.user-comments').waitFor();
+      const comments=await json('/commentsOfUser/'+user._id);
+      assert.equal(await page.locator('[data-comment-id]').count(),comments.length);
+      for(const comment of comments){
+        for(const target of ['img','p']){
+          const card=page.locator('[data-comment-id="'+comment._id+'"]');
+          assert((await card.textContent()).includes(comment.comment));
+          await card.locator(target).click();
+          await page.locator('[data-photo-id="'+comment.photo._id+'"]').waitFor();
+          assert.equal(await page.locator('[data-photo-id]').count(),1);
+          assert((await page.locator('[data-photo-id]').textContent()).includes(comment.comment));
+          await page.goBack();await page.locator('.user-comments').waitFor();
+        }
+        authoredLinks++;
+      }
+    }
     fs.mkdirSync('results',{recursive:true});
+    await page.screenshot({path:'results/comments-desktop.png',fullPage:true});
     await page.screenshot({path:'results/database-photos.png',fullPage:true});
     await page.setViewportSize({width:390,height:844});
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
     await page.screenshot({path:'results/database-mobile.png',fullPage:true});
     assert.deepEqual(errors,[]);
     fs.writeFileSync('results/checks.json',JSON.stringify({users:users.length,photoCount,commentCount,
-      schemaVersion:info.version,strictProjection:true,invalidAndMissingIds400:true,liveDatabaseMutation:true,
+      authoredLinks,advancedBubbles:true,commentThumbnailAndTextNavigation:true,schemaVersion:info.version,strictProjection:true,invalidAndMissingIds400:true,liveDatabaseMutation:true,
       validUserZeroPhotos:true,axiosBrowserAllUsers:true,photoRefreshAndStepper:true,mobileNoOverflow:true,pageErrors:errors},null,2));
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
