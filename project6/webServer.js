@@ -46,7 +46,6 @@ const SchemaInfo = require("./schema/schemaInfo.js");
 
 // XXX - Your submission should work without this line. Comment out or delete
 // this line for tests and before submission!
-const cs142models = require("./modelData/photoApp.js").cs142models;
 mongoose.set("strictQuery", false);
 mongoose.connect("mongodb://127.0.0.1/cs142project6", {
   useNewUrlParser: true,
@@ -142,36 +141,68 @@ app.get("/test/:p1", function (request, response) {
 /**
  * URL /user/list - Returns all the User objects.
  */
-app.get("/user/list", function (request, response) {
-  response.status(200).send(cs142models.userListModel());
+app.get("/user/list", async function (request, response) {
+  try {
+    const users = await User.find({}).select("_id first_name last_name").lean();
+    response.status(200).json(users);
+  } catch (error) {
+    response.status(500).send("Unable to retrieve users");
+  }
 });
 
 /**
  * URL /user/:id - Returns the information for User (id).
  */
-app.get("/user/:id", function (request, response) {
+app.get("/user/:id", async function (request, response) {
   const id = request.params.id;
-  const user = cs142models.userModel(id);
-  if (user === null) {
-    console.log("User with _id:" + id + " not found.");
-    response.status(400).send("Not found");
+  if (!/^[a-fA-F0-9]{24}$/.test(id)) {
+    response.status(400).send("Invalid user id");
     return;
   }
-  response.status(200).send(user);
+  try {
+    const user = await User.findById(id).select("_id first_name last_name location description occupation").lean();
+    if (!user) {
+      response.status(400).send("User not found");
+      return;
+    }
+    response.status(200).json(user);
+  } catch (error) {
+    response.status(500).send("Unable to retrieve user");
+  }
 });
 
 /**
  * URL /photosOfUser/:id - Returns the Photos for User (id).
  */
-app.get("/photosOfUser/:id", function (request, response) {
+app.get("/photosOfUser/:id", async function (request, response) {
   const id = request.params.id;
-  const photos = cs142models.photoOfUserModel(id);
-  if (photos.length === 0) {
-    console.log("Photos for user with _id:" + id + " not found.");
-    response.status(400).send("Not found");
+  if (!/^[a-fA-F0-9]{24}$/.test(id)) {
+    response.status(400).send("Invalid user id");
     return;
   }
-  response.status(200).send(photos);
+  try {
+    const [user, photos] = await Promise.all([
+      User.exists({ _id: id }),
+      Photo.find({ user_id: id }).select("_id user_id comments file_name date_time").lean()
+    ]);
+    if (!user) {
+      response.status(400).send("User not found");
+      return;
+    }
+    const ids = [...new Set(photos.flatMap((photo) => (photo.comments || []).map((comment) => String(comment.user_id))))];
+    const authors = await User.find({ _id: { $in: ids } }).select("_id first_name last_name").lean();
+    const byId = new Map(authors.map((author) => [String(author._id), author]));
+    const result = photos.map((photo) => ({
+      _id: photo._id, user_id: photo.user_id, file_name: photo.file_name, date_time: photo.date_time,
+      comments: (photo.comments || []).map((comment) => ({
+        _id: comment._id, comment: comment.comment, date_time: comment.date_time,
+        user: byId.get(String(comment.user_id)) || null
+      }))
+    }));
+    response.status(200).json(result);
+  } catch (error) {
+    response.status(500).send("Unable to retrieve photos");
+  }
 });
 
 const server = app.listen(3000, function () {

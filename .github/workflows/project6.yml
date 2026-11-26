@@ -1,0 +1,51 @@
+name: CS142 Project6 React
+on:
+  push:
+    branches: [edidada/project6]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      mongo:
+        image: mongo:6.0
+        ports: ['27017:27017']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Original locked dependencies and strict original ESLint
+        working-directory: project6
+        run: |
+          npm ci
+          npm ci --prefix test
+          ./node_modules/.bin/eslint --max-warnings 0 lib/*.js *.jsx components/*/*.jsx
+          npm run build
+      - name: Install Chromium verification separately
+        run: |
+          npm install --prefix .browser-check --no-package-lock playwright@1.56.1
+          .browser-check/node_modules/.bin/playwright install --with-deps chromium
+      - name: Serve original application and test real browser
+        env:
+          NODE_PATH: ${{ github.workspace }}/.browser-check/node_modules
+        run: |
+          mkdir -p results
+          (cd project6 && node loadDatabase.js) > results/database-load.log 2>&1
+          (cd project6 && node webServer.js) > results/server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3000/photo-share.html > /dev/null; then break; fi
+            sleep 1
+          done
+          (cd project6/test && npm test) | tee results/official-tests.log
+          node scripts/verify-project6.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cs142-project6-browser-results
+          path: results/
