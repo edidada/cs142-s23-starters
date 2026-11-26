@@ -335,7 +335,7 @@ app.get("/activities", async function (request, response) {
   catch (error) { response.status(500).send("Unable to retrieve activities"); }
 });
 app.get("/latestActivities", async function (request, response) {
-  try { response.json(await Activity.aggregate([{ $sort: { date_time: -1, _id: -1 } }, { $group: { _id: "$user_id", activity: { $first: "$ROOT" } } }])); }
+  try { response.json(await Activity.aggregate([{ $sort: { date_time: -1, _id: -1 } }, { $group: { _id: "$user_id", activity: { $first: "$$ROOT" } } }])); }
   catch (error) { response.status(500).send("Unable to retrieve latest activities"); }
 });
 app.get("/profileSummary/:id", async function (request, response) {

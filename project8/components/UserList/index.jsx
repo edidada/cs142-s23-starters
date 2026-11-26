@@ -16,7 +16,7 @@ function UserList({ advanced = false }) {
       {data.map((user) => (
         <ListItem key={user._id}>
           <ListItemText primary={<Link to={`/users/${user._id}`}>{user.first_name} {user.last_name}</Link>} />
-          {activities && activities.filter(item => item._id === user._id).map(({ activity }) => (
+          {activities && activities.filter(item => item && item.activity && item._id === user._id).map(({ activity }) => (
             <div key={activity._id} className="latest-activity" data-activity-user={user._id}>
               <small>{activity.type} · {new Date(activity.date_time).toLocaleString()}</small>
               {activity.photo && activity.photo.file_name && <img width="40" src={`images/${activity.photo.file_name}`} alt="Latest upload" />}

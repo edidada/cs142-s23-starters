@@ -11,6 +11,7 @@ const {chromium}=require('playwright');const assert=require('node:assert/strict'
   const took=await post(a,'/admin/login',{login_name:'took',password:'weak'});
   const ripley=await post(b,'/admin/login',{login_name:'ripley',password:'weak'});
   const users=await get(a,'/user/list');
+  const latest=await get(a,'/latestActivities');assert(latest.every(item=>item.activity&&item.activity._id&&item.activity.user_id===item._id));
   for(const user of users){
     const photos=await get(a,'/photosOfUser/'+user._id);const summary=await get(a,'/profileSummary/'+user._id);
     if(!photos.length){assert.equal(summary.latest,null);assert.equal(summary.mostCommented,null);continue;}
