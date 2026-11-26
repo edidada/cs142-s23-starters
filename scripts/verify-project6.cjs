@@ -49,6 +49,8 @@ async function json(path){const r=await fetch(base+path);assert.equal(r.status,2
     for(const user of users){
       await page.goto(base+'/photo-share.html#/users/'+user._id);
       await page.locator('.user-detail').waitFor();
+      // Hash-only navigation preserves the app's feature flag from the prior user.
+      await page.getByRole('checkbox',{name:'Enable Advanced Features'}).uncheck();
       assert.equal(await page.locator('.user-detail h1').innerText(),user.first_name+' '+user.last_name);
       await page.waitForFunction(version=>document.querySelector('.schema-version').textContent==='Version '+version,info.version);
       assert.equal(await page.evaluate(()=>typeof window.cs142models),'undefined');
