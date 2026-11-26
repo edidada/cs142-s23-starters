@@ -1,0 +1,7 @@
+
+.user-counts { display: flex; gap: 8px; }
+.photo-count, .comment-count { border-radius: 50%; min-width: 26px; padding: 3px; text-align: center; color: white; }
+.photo-count { background: #237b32; }
+.comment-count { background: #bb2020; }
+
+.MuiListItem-root { flex-wrap: wrap; } .latest-activity { width: 100%; display: flex; align-items: center; gap: 6px; overflow-wrap: anywhere; }

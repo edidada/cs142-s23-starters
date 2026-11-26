@@ -1,0 +1,53 @@
+name: CS142 Project8 Sessions and Input
+on:
+  push:
+    branches: [edidada/project8]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      mongo:
+        image: mongo:6.0
+        ports: ['27017:27017']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Locked dependencies and strict original lint
+        working-directory: project8
+        run: |
+          npm ci
+          npm ci --prefix test
+          ./node_modules/.bin/eslint --max-warnings 0 webServer.js loadDatabase.js cs142password.js schema/activity.js lib/*.js *.jsx components/*/*.jsx
+          npm run build
+      - name: Browser dependencies
+        run: |
+          npm install --prefix .browser-check --no-package-lock playwright@1.56.1
+          .browser-check/node_modules/.bin/playwright install --with-deps chromium
+      - name: Original tests and full-stack browser
+        env:
+          NODE_PATH: ${{ github.workspace }}/.browser-check/node_modules
+        run: |
+          set -euo pipefail
+          mkdir -p results
+          (cd project8 && node loadDatabase.js) > results/database-load.log 2>&1
+          (cd project8 && node webServer.js) > results/server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3000/photo-share.html > /dev/null; then break; fi
+            sleep 1
+          done
+          (cd project8/test && npm test) | tee results/official-tests.log
+          node scripts/verify-project8-baseline.cjs
+          node scripts/verify-project8.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cs142-project8-results
+          path: results/

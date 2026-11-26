@@ -1,0 +1,8 @@
+CS142 Project8 self-study submission
+Stories selected: #1 profile summary (3), #4 activity feed (4), #6 likes (4), #8 automatic sidebar activity (3). Total: 14.
+Run: npm ci; node loadDatabase.js; node webServer.js; open http://localhost:3000/photo-share.html.
+Test users: took/weak and ripley/weak (seeded course-only accounts).
+Profile: open a user detail; latest and most-commented thumbnails link to photos. Enable Advanced Features for single-photo stepper.
+Activities: toolbar Activities shows last five, Refresh activities reloads them. Sidebar polls every 2 seconds.
+Likes: each photo has Like/Unlike and count. Ordering updates on page refresh, count and own pressed state update immediately.
+Video URL: PENDING. Narrated video and formal class submission not yet completed. No permission to share any video granted here.
