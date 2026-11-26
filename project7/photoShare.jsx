@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { Grid, Paper } from "@mui/material";
@@ -10,7 +11,6 @@ import UserPhotos from "./components/UserPhotos";
 
 import UserComments from "./components/UserComments";
 
-import axios from "axios";
 import LoginRegister from "./components/LoginRegister";
 
 function PhotoShare() {
@@ -30,13 +30,16 @@ function PhotoShare() {
         </Grid>
         <Grid item xs={12} sm={9}>
           <Paper className="cs142-main-grid-item">
-            {!user ? <><Redirect to="/login-register" /><LoginRegister onLogin={login} /></> : <Switch>
+            {!user && <><Redirect to="/login-register" /><LoginRegister onLogin={login} /></>}
+            {user && (
+              <Switch>
               <Route exact path="/"><Redirect to="/users" /></Route>
               <Route path="/comments/:userId" render={(props) => <UserComments {...props} advanced={advanced} />} />
               <Route path="/users/:userId" component={UserDetail} />
               <Route path="/photos/:userId/:photoId?" render={(props) => <UserPhotos {...props} advanced={advanced} />} />
               <Route path="/users" component={UserList} />
-            </Switch>}
+              </Switch>
+            )}
           </Paper>
         </Grid>
       </Grid>
