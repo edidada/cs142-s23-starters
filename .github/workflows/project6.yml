@@ -33,6 +33,7 @@ jobs:
         env:
           NODE_PATH: ${{ github.workspace }}/.browser-check/node_modules
         run: |
+          set -euo pipefail
           mkdir -p results
           (cd project6 && node loadDatabase.js) > results/database-load.log 2>&1
           (cd project6 && node webServer.js) > results/server.log 2>&1 &
