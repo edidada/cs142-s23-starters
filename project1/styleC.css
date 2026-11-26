@@ -1,0 +1,24 @@
+body {
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 18px;
+  background: #101e32;
+  font: 40px Tahoma, sans-serif;
+}
+.box {
+  display: grid;
+  place-items: center;
+  width: 100px;
+  height: 100px;
+  color: white;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #287bc2, #7350b4);
+  box-shadow: 0 8px 18px #0008;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.box:hover { transform: translateY(-8px); box-shadow: 0 14px 24px #000a; }
+@media (prefers-reduced-motion: reduce) { .box { transition: none; } }

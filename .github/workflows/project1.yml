@@ -1,0 +1,37 @@
+name: CS142 Project1 HTML CSS
+on:
+  push:
+    branches: [edidada/project1]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: XHTML validation against W3C DTD
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libxml2-utils w3c-sgml-lib
+          mkdir -p results
+          dtd=$(find /usr/share -name xhtml1-strict.dtd -print -quit)
+          test -n "$dtd"
+          xmllint --nonet --noout --dtdvalid "$dtd" project1/index.html 2>&1 | tee results/xhtml-validation.log
+      - name: Browser dependencies
+        run: |
+          npm install --prefix .browser-check --no-package-lock playwright@1.56.1
+          .browser-check/node_modules/.bin/playwright install --with-deps chromium
+      - name: Verify real layout
+        env:
+          NODE_PATH: ${{ github.workspace }}/.browser-check/node_modules
+        run: node scripts/verify-project1.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cs142-project1-results
+          path: results/
