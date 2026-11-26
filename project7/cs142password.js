@@ -1,4 +1,3 @@
-"use strict";
 const crypto = require("crypto");
 function makePasswordEntry(clearTextPassword) {
   const salt = crypto.randomBytes(8).toString("hex");
