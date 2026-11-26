@@ -17,7 +17,7 @@ const {chromium}=require('playwright');
   const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
   const load=async(style,width,height)=>{
    await page.setViewportSize({width,height});await page.goto('http://127.0.0.1:3000/index.html');
-   await page.evaluate(style=>new Promise((resolve,reject)=>{const link=document.querySelector('link');link.onload=resolve;link.onerror=reject;link.href=style+'.css';}),style);
+   await page.evaluate(style=>new Promise((resolve,reject)=>{const link=document.querySelector('link');link.onload=resolve;link.onerror=reject;link.href=style+'.css?layout-check='+Date.now();}),style);
    await page.mouse.move(width-1,1);
   };
   const boxes=()=>page.locator('.box').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect(),s=getComputedStyle(n);return{x:r.x,y:r.y,width:r.width,height:r.height,bg:s.backgroundColor,color:s.color,font:s.fontFamily,size:s.fontSize,top:s.borderTopWidth,left:s.borderLeftWidth,leftStyle:s.borderLeftStyle,pad:s.paddingLeft};}));
