@@ -14,7 +14,7 @@ function UserComments({ match, advanced }) {
       {data.map(comment => (
         <article key={comment._id} data-comment-id={comment._id}>
           <Link to={`/photos/${comment.photo.user_id}/${comment.photo._id}`}>
-            <img width="90" src={`images/${comment.photo.file_name}`} alt="Commented photo" />
+            <img width="90" src={`images/${comment.photo.file_name}`} alt="Comment context" />
             <p>{comment.comment}</p>
           </Link>
         </article>

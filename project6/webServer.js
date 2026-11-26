@@ -193,9 +193,14 @@ app.get("/photosOfUser/:id", async function (request, response) {
     const authors = await User.find({ _id: { $in: ids } }).select("_id first_name last_name").lean();
     const byId = new Map(authors.map((author) => [String(author._id), author]));
     const result = photos.map((photo) => ({
-      _id: photo._id, user_id: photo.user_id, file_name: photo.file_name, date_time: photo.date_time,
+      _id: photo._id,
+      user_id: photo.user_id,
+      file_name: photo.file_name,
+      date_time: photo.date_time,
       comments: (photo.comments || []).map((comment) => ({
-        _id: comment._id, comment: comment.comment, date_time: comment.date_time,
+        _id: comment._id,
+        comment: comment.comment,
+        date_time: comment.date_time,
         user: byId.get(String(comment.user_id)) || null
       }))
     }));
@@ -237,7 +242,9 @@ app.get("/commentsOfUser/:id", async function (request, response) {
     if (!user) { response.status(400).send("User not found"); return; }
     response.json(photos.flatMap(photo => (photo.comments || [])
       .filter(comment => String(comment.user_id) === id)
-      .map(comment => ({ _id: comment._id, comment: comment.comment, date_time: comment.date_time,
+      .map(comment => ({ _id: comment._id,
+        comment: comment.comment,
+        date_time: comment.date_time,
         photo: { _id: photo._id, user_id: photo.user_id, file_name: photo.file_name } }))));
   } catch (error) { response.status(500).send("Unable to retrieve comments"); }
 });
