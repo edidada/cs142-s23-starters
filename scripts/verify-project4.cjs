@@ -26,7 +26,7 @@ const fs=require('node:fs');
       const expected=names.filter(n=>n.toLowerCase().includes(term.toLowerCase()));
       assert.deepEqual(await page.locator('.states-view li').allTextContents(),expected);
       assert.equal(await page.locator('.states-view output').innerText(),term);
-      assert.equal(await page.getByRole('status').count(),expected.length?0:1);
+      assert.equal(await page.locator('.states-view p[role="status"]').count(),expected.length?0:1);
     }
     await page.getByLabel('State name contains').fill('aL');
     fs.mkdirSync('results',{recursive:true});
