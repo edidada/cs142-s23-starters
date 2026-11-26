@@ -38,6 +38,12 @@
       "url": "https://web.stanford.edu/class/cs142/downloads/project7.zip",
       "sha256": "edabd2d156f8b6f5e72b84cb9fad33bcbda7b2e74ad04128e80a6d2ae367f9d5",
       "bytes": 669988
+    },
+    {
+      "directory": "project8",
+      "url": "https://web.stanford.edu/class/cs142/downloads/project8.zip",
+      "sha256": "5b21cf03adcb7248c1e37ba567934170a46dbccc0470d08925f35dc39a034aab",
+      "note": "Official submission form only; application inherited from completed Project7. Template example is stale; story numbers and latest-five behavior follow official 2023 document."
     }
   ]
 }

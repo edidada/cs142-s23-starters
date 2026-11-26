@@ -1,4 +1,4 @@
-name: CS142 Project8 Sessions and Input
+name: CS142 Project8 Photo App Sprint
 on:
   push:
     branches: [edidada/project8]

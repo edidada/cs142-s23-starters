@@ -1,8 +1,32 @@
-CS142 Project8 self-study submission
-Stories selected: #1 profile summary (3), #4 activity feed (4), #6 likes (4), #8 automatic sidebar activity (3). Total: 14.
-Run: npm ci; node loadDatabase.js; node webServer.js; open http://localhost:3000/photo-share.html.
-Test users: took/weak and ripley/weak (seeded course-only accounts).
-Profile: open a user detail; latest and most-commented thumbnails link to photos. Enable Advanced Features for single-photo stepper.
-Activities: toolbar Activities shows last five, Refresh activities reloads them. Sidebar polls every 2 seconds.
-Likes: each photo has Like/Unlike and count. Ordering updates on page refresh, count and own pressed state update immediately.
-Video URL: PENDING. Narrated video and formal class submission not yet completed. No permission to share any video granted here.
+CS142 Project 8 - Submission Form
+
+Story number and name: 1 - Extend user profile detail with usage
+Story points: 3
+Brief description to see the story in action:
+Open any user detail. Latest upload and most-commented thumbnails include date/count. Click either to open its photo; Advanced Features enables the single-photo stepper.
+
+Story number and name: 4 - Activity feed
+Story points: 4
+Brief description to see the story in action:
+Use toolbar Activities. The five latest events show date, user, type and photo thumbnails when applicable; Refresh activities retrieves updates. Login/logout, registration, upload and comment events are recorded.
+
+Story number and name: 6 - Photo like votes
+Story points: 4
+Brief description to see the story in action:
+Use Like/Unlike on any photo. Own status and total update immediately. Refresh to sort by descending likes, then descending photo date.
+
+Story number and name: 8 - Sidebar list marks users with new activity
+Story points: 3
+Brief description to see the story in action:
+Keep a session open while a second account logs in/uploads/comments/logs out. The sidebar polls every two seconds and shows each user's latest event, including upload thumbnail.
+
+Total Story Points: 14
+
+Marketing Video URL (ensure permissions are set to public viewing):
+PENDING - narrated video not yet produced or published. This is a self-study implementation, not a completed formal class submission.
+
+Is it OK if we post your Marketing Video URL on the class discussion forum?
+No
+
+Any special instructions for grading (it should be easy for someone to run your app from a new machine):
+Use Node22 and localhost MongoDB6.0: npm ci; node loadDatabase.js; node webServer.js; open http://localhost:3000/photo-share.html. Seeded course accounts: took/weak, ripley/weak. The loader clears the course database including activities; use an isolated instance. No production credentials. Original template's example is stale (story number/latest ten); actual story mapping/latest five follows the official 2023 project document.

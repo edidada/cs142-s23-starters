@@ -343,7 +343,7 @@ app.get("/profileSummary/:id", async function (request, response) {
   try {
     if (!await User.exists({ _id: request.params.id })) { response.status(400).send("Unknown user"); return; }
     const photos = await Photo.find({ user_id: request.params.id }).select("_id user_id file_name date_time comments").lean();
-    const dto = photo => photo ? { _id: photo._id, user_id: photo.user_id, file_name: photo.file_name, date_time: photo.date_time, comments: (photo.comments || []).length } : null;
+    const dto = photo => (photo ? { _id: photo._id, user_id: photo.user_id, file_name: photo.file_name, date_time: photo.date_time, comments: (photo.comments || []).length } : null);
     const latest = [...photos].sort((a,b) => new Date(b.date_time) - new Date(a.date_time) || String(b._id).localeCompare(String(a._id)))[0];
     const popular = [...photos].sort((a,b) => (b.comments || []).length - (a.comments || []).length || new Date(b.date_time) - new Date(a.date_time))[0];
     response.json({ latest: dto(latest), mostCommented: dto(popular) });
