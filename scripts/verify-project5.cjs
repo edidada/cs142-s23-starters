@@ -46,6 +46,42 @@ const models=require('../project5/modelData/photoApp.js').cs142models;
     }
     fs.mkdirSync('results',{recursive:true});
     await page.screenshot({path:'results/photos.png',fullPage:true});
+    let stepperPhotos = 0;
+    for (const user of users) {
+      const photos = models.photoOfUserModel(user._id);
+      await page.goto(root+'#/photos/'+user._id+'/'+photos[photos.length-1]._id);
+      const toggle = page.getByRole('checkbox',{name:'Enable Advanced Features'});
+      assert.equal(await toggle.isChecked(),false);
+      await page.waitForFunction(count=>document.querySelectorAll('[data-photo-id]').length===count,photos.length);
+      await toggle.check();
+      await page.waitForFunction(id=>document.querySelectorAll('[data-photo-id]').length===1 && document.querySelector('[data-photo-id]').dataset.photoId===id,photos[photos.length-1]._id);
+      const previous=page.locator('.photo-stepper a').filter({hasText:/^Previous photo$/});
+      const next=page.locator('.photo-stepper a').filter({hasText:/^Next photo$/});
+      assert.equal(await next.getAttribute('aria-disabled'),'true');
+      for (let i=photos.length-1;i>=0;i--) {
+        assert.equal(await page.locator('[data-photo-id]').getAttribute('data-photo-id'),photos[i]._id);
+        assert.equal(await page.locator('.photo-stepper a').filter({hasText:'Bookmark this photo'}).getAttribute('href'),'#/photos/'+user._id+'/'+photos[i]._id);
+        stepperPhotos++;
+        if(i) await previous.click();
+      }
+      assert.equal(await previous.getAttribute('aria-disabled'),'true');
+      if(photos.length>1) {
+        await next.click();
+        await page.goBack();
+        assert.equal(await page.locator('[data-photo-id]').getAttribute('data-photo-id'),photos[0]._id);
+        await page.goForward();
+        assert.equal(await page.locator('[data-photo-id]').getAttribute('data-photo-id'),photos[1]._id);
+      }
+      await toggle.uncheck();
+      assert.equal(await page.locator('[data-photo-id]').count(),photos.length);
+      await toggle.check();
+      assert.equal(await page.locator('[data-photo-id]').count(),1);
+      await page.reload();
+      assert.equal(await page.getByRole('checkbox',{name:'Enable Advanced Features'}).isChecked(),false);
+    }
+    await page.getByRole('checkbox',{name:'Enable Advanced Features'}).check();
+    await page.locator('.photo-stepper').waitFor();
+    await page.screenshot({path:'results/stepper.png',fullPage:true});
     // Exercise the actual transport in isolation, without changing its implementation.
     const source=fs.readFileSync('project5/lib/fetchModelData.js','utf8').replace('export default fetchModel;','window.fixtureFetch = fetchModel;');
     await page.addScriptTag({content:source});
@@ -75,6 +111,7 @@ const models=require('../project5/modelData/photoApp.js').cs142models;
     assert.deepEqual(errors,[]);
     fs.writeFileSync('results/checks.json',JSON.stringify({users:users.length,photosChecked,commentsChecked,
       serverDataOnly:true,allPhotoDeepLinksReload:true,concurrentXHR:true,httpAndJsonErrors:true,
+      stepperPhotos,advancedDefaultOff:true,stepperBoundaryAndHistory:true,disableRestoresAllPhotos:true,
       staleResponseGuard:true,mobileNoOverflow:true,pageErrors:errors},null,2));
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1);});
