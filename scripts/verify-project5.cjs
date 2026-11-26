@@ -16,7 +16,7 @@ const models=require('../project5/modelData/photoApp.js').cs142models;
       await page.goto(root+'#/users/'+user._id);
       await page.locator('.user-detail').waitFor();
       assert.equal(await page.locator('.user-detail h1').innerText(),name);
-      for(const field of ['location','occupation','description']) assert((await page.locator('.user-detail').innerText()).includes(user[field]));
+      for(const field of ['location','occupation','description']) assert((await page.locator('.user-detail').textContent()).includes(user[field]),name+' '+field);
       await page.waitForFunction(name=>document.querySelector('.view-context').textContent===name,name);
       assert.equal(await page.locator('.schema-version').innerText(),'Version '+models.schemaInfo().__v);
       assert.equal(await page.locator('nav[aria-label="Users"] a').count(),users.length);
@@ -34,7 +34,7 @@ const models=require('../project5/modelData/photoApp.js').cs142models;
         assert.equal(await card.locator('.photo-comments li').count(),comments.length);
         for(let i=0;i<comments.length;i++) {
           const item=card.locator('.photo-comments li').nth(i),comment=comments[i];
-          assert((await item.innerText()).includes(comment.comment));
+          assert((await item.textContent()).includes(comment.comment));
           assert.equal(await item.locator('a').getAttribute('href'),'#/users/'+comment.user._id);
           assert.equal(await item.locator('time').getAttribute('datetime'),comment.date_time);
           commentsChecked++;
