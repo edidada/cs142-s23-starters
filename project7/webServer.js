@@ -46,6 +46,7 @@ const express = require("express");
 const app = express();
 
 // Load the Mongoose schema for User, Photo, and SchemaInfo
+const passwords = require("./cs142password");
 const User = require("./schema/user.js");
 const Photo = require("./schema/photo.js");
 const SchemaInfo = require("./schema/schemaInfo.js");
@@ -67,7 +68,7 @@ app.post("/admin/login", async function (request, response) {
   if (!nonempty(request.body.login_name) || !nonempty(request.body.password)) { response.status(400).send("Login name and password required"); return; }
   try {
     const user = await User.findOne({ login_name: request.body.login_name });
-    if (!user || user.password !== request.body.password) { response.status(400).send("Invalid login name or password"); return; }
+    if (!user || !passwords.doesPasswordMatch(user.password_digest, user.salt, request.body.password)) { response.status(400).send("Invalid login name or password"); return; }
     request.session.regenerate(error => {
       if (error) { response.status(500).send("Unable to create session"); return; }
       request.session.user = publicUser(user);
@@ -89,7 +90,9 @@ app.post("/user", async function (request, response) {
   }
   try {
     if (await User.exists({ login_name: body.login_name })) { response.status(400).send("Login name already exists"); return; }
-    const user = await User.create(Object.fromEntries(["login_name", "password", "first_name", "last_name", "location", "description", "occupation"].map(key => [key, body[key]])));
+    const entry = passwords.makePasswordEntry(body.password);
+    const fields = Object.fromEntries(["login_name", "first_name", "last_name", "location", "description", "occupation"].map(key => [key, body[key]]));
+    const user = await User.create({ ...fields, password_digest: entry.hash, salt: entry.salt });
     response.json({ ...publicUser(user), login_name: user.login_name });
   } catch (error) { if (error.code === 11000) response.status(400).send("Login name already exists"); else response.status(500).send("Unable to register"); }
 });

@@ -46,6 +46,23 @@ const fs=require('node:fs');
   await login.getByRole('button',{name:'Login',exact:true}).click();await page.getByText('Hi Browser',{exact:true}).waitFor();
   await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
   await page.screenshot({path:'results/registered-mobile.png',fullPage:true});assert.deepEqual(errors,[]);
-  fs.writeFileSync('results/checks.json',JSON.stringify({loginFailure:true,deepLinkGuard:true,refreshSession:true,commentImmediate:true,photoUpload:true,logout:true,passwordMismatch:true,registrationCleared:true,newUserLogin:true,mobileNoOverflow:true,pageErrors:errors},null,2));
+  const mongoose=require('../project7/node_modules/mongoose');
+  await mongoose.connect('mongodb://127.0.0.1/cs142project6');
+  try {
+    const users=await mongoose.connection.collection('users').find({}).toArray();
+    assert(users.length>=8);
+    const salts=new Set();
+    for(const user of users){
+      assert(!Object.hasOwn(user,'password'));
+      assert.match(user.password_digest,/^[a-f0-9]{40}$/);assert.match(user.salt,/^[a-f0-9]{16}$/);
+      assert(!salts.has(user.salt));salts.add(user.salt);
+    }
+    const registered=users.find(u=>u.login_name===unique);assert(registered);
+    const crypto=require('node:crypto');
+    assert.equal(registered.password_digest,crypto.createHash('sha1').update(registered.salt+'test-only').digest('hex'));
+    const publicUsers=await (await page.request.get('http://localhost:3000/user/list')).json();
+    for(const user of publicUsers)assert.deepEqual(Object.keys(user).sort(),['_id','first_name','last_name']);
+  } finally {await mongoose.disconnect();}
+  fs.writeFileSync('results/checks.json',JSON.stringify({saltedDatabaseAudit:true,noPlaintextPassword:true,uniqueSalts:true,registrationDigestIndependentCheck:true,loginFailure:true,deepLinkGuard:true,refreshSession:true,commentImmediate:true,photoUpload:true,logout:true,passwordMismatch:true,registrationCleared:true,newUserLogin:true,mobileNoOverflow:true,pageErrors:errors},null,2));
  } finally {await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1);});

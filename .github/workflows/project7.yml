@@ -23,7 +23,7 @@ jobs:
         run: |
           npm ci
           npm ci --prefix test
-          ./node_modules/.bin/eslint --max-warnings 0 webServer.js loadDatabase.js lib/*.js *.jsx components/*/*.jsx
+          ./node_modules/.bin/eslint --max-warnings 0 webServer.js loadDatabase.js cs142password.js lib/*.js *.jsx components/*/*.jsx
           npm run build
       - name: Browser dependencies
         run: |

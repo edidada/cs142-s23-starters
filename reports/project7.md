@@ -7,3 +7,6 @@
 独立project7.yml在隔离MongoDB上运行原始Mocha及Chromium全栈流程、严格原ESLint与webpack。新增脚本scripts/verify-project7.cjs；执行结果尚待登记。原测试未修改。本地仅依赖锁文件生成及源码检查，不运行课程。
 
 边界：密码暂按必做要求存储明文，盐化密码可选项尚未实现，不用于真实账号；内存session/课程静态文件服务器非生产部署。可选Project6气泡继承，统计可能在当前会话新增评论后需刷新，不宣称Project7完整验收；正式私有评分未执行。
+
+## 盐化密码可选项（最新实现）
+cs142password模块使用8字节随机salt与SHA1(salt+password)，schema移除password改password_digest/salt；loader与注册同步生成，登录恒定时间比较。按官方规定追加原passwordApiTest到npm test。独立数据库审计断言全部用户无明文且salt唯一，新注册用户摘要用独立crypto重算；最终CI待登记。课程规定SHA1机制不作为生产密码存储建议，覆盖此前明文实现说明。
